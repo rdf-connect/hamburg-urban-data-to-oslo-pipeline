@@ -1,20 +1,12 @@
-
-FROM gradle:9.5.1-jdk21 AS gradle-dist
-
-FROM timbru31/java-node:21-jdk-20
-
-ENV GRADLE_HOME=/opt/gradle
-ENV PATH="${GRADLE_HOME}/bin:${PATH}"
-
-COPY --from=gradle-dist /opt/gradle /opt/gradle
-
-RUN gradle --version
+FROM timbru31/java-node:21-20
 
 # Setup working folder
 WORKDIR /opt/pipeline
 COPY . .
 
-RUN gradle copyPlugins --no-daemon
+RUN wget https://pod.rubendedecker.be/scholar/misc/rml-processor-jvm-0.0.1-all.jar ; 
+RUN mv rml-processor-jvm-0.0.1-all.jar build/plugins/.
+
 
 # Install dependencies
 RUN npm install
