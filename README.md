@@ -1,12 +1,14 @@
-# Mapping the SensorThings API into the OSLO data model, output to a target graphstore
-======================================================================================
+# Mapping the Hamburg Urban Data platform into the OSLO data model
+==================================================================
 
-Both the SensorThings and SOSA/SSN data models are used to represent sensor observations.
-Where SOSA / SSN is a data model, SensorThings defines both an API and a data model.
+This pipeline maps data from the [Hamburg Urban Data platform](http://iot.hamburg.de/)
+published under the [SensorThings API specification](https://docs.ogc.org/is/18-088/18-088.html),
+into the [OSLO Verkeersmetingen standard]([https://docs.ogc.org/is/18-088/18-088.html](https://data.vlaanderen.be/doc/applicatieprofiel/verkeersmetingen/erkendestandaard/2024-04-17/)).
 
-This pipeline both has a fetch component that uses the SensorThings API to retrieve relevant sensordata, 
-which is then converted to RDF using the RML Mapper and the STAPI ontology we created for this use-case.
-Afterwards, the data is mapped into the SOSA / SSN ontology using SPARQL Construct.
+The pipeline performs the fetch of the provided datastream, performs an RML mapping according to the internal mappings,
+available in [yarrrml format](./mappings/yarrrml/mapping.yml), and in [RML format](./mappings/mapping.rml.yml), 
+for which the compliance shape is available as a [shacl shape](https://data.vlaanderen.be/doc/applicatieprofiel/verkeersmetingen/erkendestandaard/2024-04-17/shacl/Verkeersmetingen-ap-SHACL.ttl). The resuling mapped data is then published to a target graphstore.
+
 
 ## Preparation
 The pipeline expects a graphstore to be avaialable to which it can output the mapping results of the datastream. 
@@ -50,11 +52,11 @@ services:
 
 ## Development
 
-First clone the pipeline repository
+The repository can be cloned as follows:
 
 ```
 git clone git@github.com:rdf-connect/hamburg-urban-data-to-oslo-pipeline.git
 cd hamburg-to-oslo-graphstore
 ```
 
-After which you can edit the 
+Note that if you want to publish an updated pipeline, you will need to fork the repository and publish the new pipeline under your newly created repository.
