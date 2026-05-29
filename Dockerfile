@@ -1,13 +1,18 @@
-# Start from a Node container
-FROM timbru31/java-node:21-20
+
+FROM gradle:9.5.1-jdk21 AS gradle-dist
+
+FROM timbru31/java-node:21-jdk-20
+
+ENV GRADLE_HOME=/opt/gradle
+ENV PATH="${GRADLE_HOME}/bin:${PATH}"
+
+COPY --from=gradle-dist /opt/gradle /opt/gradle
+
+RUN gradle --version
+
 # Setup working folder
 WORKDIR /opt/pipeline
 COPY . .
-
-RUN apt-get update && apt-get install -y wget unzip
-RUN wget https://services.gradle.org/distributions/gradle-8.4.1-bin.zip -O /tmp/gradle.zip \
- && unzip /tmp/gradle.zip -d /opt/ \
- && ln -s /opt/gradle-8.4.1/bin/gradle /usr/bin/gradle
 
 RUN gradle copyPlugins --no-daemon
 
