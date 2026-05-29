@@ -1,0 +1,28 @@
+{
+    "name": "hamburg-to-ldes-pipeline",
+    "version": "0.0.1",
+    "description": "RDF-Connect pipeline to ingest Hamburg Urban Data platform traffic countings and convert them into the OSLO Verkeersmetingen data format and post the resulting mappings to a graphstore.",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rdf-connect/hamburg-to-oslo-pipeline"
+    },
+    "author": "Ruben Dedecker",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/rdf-connect/hamburg-to-oslo-pipeline/issues"
+    },
+    "scripts": {
+        "test": "",
+        "preinstall": "cd ./processors/http-utils-processor-ts/ && npm install && npm run build"
+    },
+    "dependencies": {
+        "@rdfc/file-utils-processors-ts": "^1.0.1",
+        "@rdfc/js-runner": "^3.1.0",
+        "@rdfc/log-processor-ts": "^2.0.3",
+        "@rdfc/orchestrator-js": "^2.1.0",
+        "@rdfc/sds-processors-ts": "^2.0.0",
+        "@rdfc/sensorthings-api-fetcher-ts": "^0.1.10",
+        "@rdfc/shacl-processor-ts": "^1.0.1"
+    }
+}

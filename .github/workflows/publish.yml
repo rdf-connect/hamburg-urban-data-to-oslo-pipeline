@@ -1,0 +1,86 @@
+name: Publish container
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # -------------------------------------------------
+      # 1. Checkout with full history (needed for tags)
+      # -------------------------------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # -------------------------------------------------
+      # 2. Set up QEMU for multi-platform
+      # -------------------------------------------------
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # -------------------------------------------------
+      # 3. Set up Docker Buildx
+      # -------------------------------------------------
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # -------------------------------------------------
+      # 4. Login to GHCR
+      # -------------------------------------------------
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # -------------------------------------------------
+      # 5. Determine image tag(s)
+      # -------------------------------------------------
+      - name: Determine image tags
+        id: tags
+        run: |
+          # Lowercase repo: DexaGod/MyRepo -> dexagod/myrepo
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          
+          # Base image
+          IMAGE="ghcr.io/$REPO_LOWER"
+          
+          # Default tag
+          TAGS="$IMAGE:latest"
+          
+          # If this is a git tag (e.g. v1.2.3), add it
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG=${GITHUB_REF#refs/tags/}
+            # Remove 'v' prefix if present
+            TAG=${TAG#v}
+            TAGS="$TAGS,$IMAGE:$TAG"
+          fi
+          
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+          echo "Tags: $TAGS"
+
+      # -------------------------------------------------
+      # 6. Build and push (multi-platform, no provenance)
+      # -------------------------------------------------
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          provenance: false
+          sbom: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

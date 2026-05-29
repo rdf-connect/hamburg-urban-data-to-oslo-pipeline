@@ -1,0 +1,97 @@
+@prefix rdfl: <https://w3id.org/rdf-lens/ontology#>.
+@prefix rdfc: <https://w3id.org/rdf-connect#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix stapi: <https://w3id.org/stapi#> .
+@prefix ex: <http://example.org/>.
+@prefix tree: <https://w3id.org/tree#>.
+
+### Import runners and processors
+<> owl:imports <./node_modules/@rdfc/js-runner/index.ttl>.
+
+# Import the jvm-runner
+<> owl:imports <https://javadoc.jitpack.io/com/github/rdf-connect/jvm-runner/runner/master-SNAPSHOT/runner-master-SNAPSHOT-index.jar>.
+
+<> owl:imports <./build/plugins/rml-processor-jvm-master-SNAPSHOT-all.jar>.
+
+<> owl:imports <./processors/http-utils-processor-ts/processors.ttl>.
+
+# sensorthings import
+<> owl:imports <./node_modules/@rdfc/sensorthings-api-fetcher-ts/processor.ttl>.
+
+<> owl:imports <./node_modules/@rdfc/file-utils-processors-ts/processors.ttl>.
+
+
+
+<hamburg> a rdfc:Reader, rdfc:Writer.
+<mappingData> a rdfc:Reader, rdfc:Writer.
+<rdfdata> a rdfc:Reader, rdfc:Writer;
+    rdfc:logLevel "info".
+
+
+### Define the pipeline
+<> a rdfc:Pipeline;
+   rdfc:consistsOf [
+       rdfc:instantiates rdfc:NodeRunner;
+       rdfc:processor <fetcher>, <mappingReader>, <poster>; 
+   ], [
+       rdfc:instantiates rdfc:JvmRunner;
+       rdfc:processor <mapper>;
+   ].
+
+
+### Define the processors
+
+
+# fetcher to get SensorThings API data
+<fetcher> a rdfc:SensorThingsFetcher;
+    rdfc:datastream [ a rdfl:EnvVariable;
+		rdfl:envDefault "https://iot.hamburg.de/v1.1/Datastreams(26598)";
+		rdfl:envKey "DATASTREAM";
+	]; 
+    rdfc:writer <hamburg> ;
+    rdfc:follow true .
+
+# Processor to read and stream out the RML mappings
+<mappingReader> a rdfc:GlobRead;
+    rdfc:glob <./mappings/mapping.rml.ttl>;
+    rdfc:output <mappingData>;
+    rdfc:closeOnEnd true .
+
+# Processor to do the RML mapping
+<mapper> a rdfc:RmlMapper;
+    rdfc:mappings <mappingData> ;
+    rdfc:source [
+        rdfc:triggers true;
+        rdfc:reader <hamburg>;
+        rdfc:mappingId ex:source1;
+    ];
+    rdfc:defaultTarget [
+        rdfc:writer <rdfdata>;
+        rdfc:format "turtle";
+    ].
+
+# <logger> a rdfc:LogProcessorJs;
+#     rdfc:reader <hamburg>;
+#     rdfc:level "info";
+#     rdfc:label "test".
+    
+# <writer> a rdfc:FileWriter;
+#     rdfc:input <rdfdata>;
+#     rdfc:filePath "./out/output.ttl";
+#     rdfc:readAsStream true.
+
+<poster> a rdfc:HttpFetch;
+    rdfc:url [ a rdfl:EnvVariable;
+		rdfl:envDefault "http://host.docker.internal:7878/store?default";
+		rdfl:envKey "GRAPHSTORE";
+	]; 
+    rdfc:reader <rdfdata>;
+    rdfc:options [
+        rdfc:method "POST";
+        rdfc:headers "Content-Type: text/turtle";
+        rdfc:acceptStatusCodes "200-300";
+        rdfc:bodyCanBeEmpty true;
+        rdfc:timeOutMilliseconds 5000;
+        rdfc:errorsAreFatal false 
+    ].
+

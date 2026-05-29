@@ -1,0 +1,12 @@
+dist/
+lib/
+node_modules/
+hamburg_ldes/
+rml-processor-jvm-0.0.1-all.jar
+build/
+.DS_Store
+.gradle
+.vscode
+out/
+jvm-runner.jar
+state/

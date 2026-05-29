@@ -1,0 +1,427 @@
+prefixes:
+  rr: "http://www.w3.org/ns/r2rml#"
+  rml: "http://semweb.mmlab.be/ns/rml#"
+  ql: "http://semweb.mmlab.be/ns/ql#"
+
+  xsd: "http://www.w3.org/2001/XMLSchema#"
+  rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  rdfs: "http://www.w3.org/2000/01/rdf-schema#"
+  dct: "http://purl.org/dc/terms/"
+  prov: "http://www.w3.org/ns/prov#"
+
+  sosa: "http://www.w3.org/ns/sosa/"
+  time: "http://www.w3.org/2006/time#"
+
+  geo: "http://www.opengis.net/ont/geosparql#"
+  sf: "http://www.opengis.net/ont/sf#"
+
+  skos: "http://www.w3.org/2004/02/skos/core#"
+
+  om: "http://def.isotc211.org/iso19156/2011/Observation#"
+
+  verkeer: "https://data.vlaanderen.be/ns/mobiliteit#"
+  verkeersmetingen: "https://data.vlaanderen.be/ns/verkeersmetingen#"
+  impl: "https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#"
+  weg: "https://data.vlaanderen.be/ns/weg#"
+
+  cl-vrt: "https://data.vlaanderen.be/doc/concept/VkmVoertuigType/"
+  cl-vkt: "https://data.vlaanderen.be/doc/concept/VkmVerkeersKenmerkType/"
+
+  ex: "https://example.org/id/"
+
+sources:
+  source:
+    access: data.json
+    referenceFormulation: jsonpath
+    iterator: "$"
+
+mappings:
+
+  #################################################
+  # 1. Verkeersmeting / Verkeerstelling
+  #################################################
+  verkeersmeting:
+    sources:
+      - source
+
+    s: "ex:verkeersmeting/$(observation['@iot.id'])"
+
+    po:
+      - p: a
+        o: verkeer:Verkeersmeting
+
+      - p: a
+        o: impl:Verkeerstelling
+
+      - p: dct:identifier
+        o: "$(observation['@iot.id'])"
+
+      - p: dct:source
+        o: "$(observation['@iot.selfLink'])~iri"
+
+      - p: prov:generatedAtTime
+        o: "$(observation.resultTime)"
+        datatype: xsd:dateTime
+
+      - p: prov:wasDerivedFrom
+        o: "$(datastream['@iot.selfLink'])~iri"
+
+      - p: dct:isPartOf
+        o: "ex:datastream/$(datastream['@iot.id'])~iri"
+
+      # AP relation: Verkeersmeting uitgevoerd met Sensor
+      - p: verkeersmetingen:uitgevoerdMet
+        o: "ex:sensor/$(sensor['@iot.id'])~iri"
+
+      # SOSA relation, kept because the AP builds on observations/sensors
+      - p: sosa:madeBySensor
+        o: "ex:sensor/$(sensor['@iot.id'])~iri"
+
+      # Observed object / meetpunt
+      - p: verkeer:geobserveerdObject
+        o: "ex:meetpunt/$(thing['@iot.id'])~iri"
+
+      # Temporal relation
+      - p: sosa:phenomenonTime
+        o: "ex:periode/$(observation['@iot.id'])~iri"
+
+      # AP-level traffic characteristic
+      - p: verkeersmetingen:geobserveerdKenmerk
+        o: "ex:kenmerk/$(observation['@iot.id'])~iri"
+
+      # Result of the observation / count
+      - p: om:OM_Observation.result
+        o: "$(observation.result)"
+        datatype: xsd:integer
+
+
+  #################################################
+  # 2. Verkeerskenmerk / Verkeerstellingkenmerk
+  #################################################
+  kenmerk:
+    sources:
+      - source
+
+    s: "ex:kenmerk/$(observation['@iot.id'])"
+
+    po:
+      - p: a
+        o: verkeersmetingen:Verkeerskenmerk
+
+      - p: a
+        o: impl:Verkeerstellingkenmerk
+
+      # AP-style characteristic type: count / aantal
+      - p: verkeersmetingen:type
+        o: "cl-vkt:aantal~iri"
+
+      # AP-style vehicle type.
+      # For Hamburg this is Kfz; verify whether your publication should mint
+      # or map to an agreed concept URI.
+      - p: verkeersmetingen:voertuigType
+        o: "cl-vrt:auto~iri"
+
+      - p: weg:voertuigtype 
+
+      # Implementation-level direction reference, because Hamburg provides
+      # an absolute textual direction rather than an OpenLR/INSPIRE link direction.
+      - p: impl:rijrichting
+        o: "ex:richting/$(datastream.properties.direction)~iri"
+
+
+  #################################################
+  # 3. Richting concept
+  #################################################
+  richtingConcept:
+    sources:
+      - source
+
+    s: "ex:richting/$(datastream.properties.direction)"
+
+    po:
+      - p: a
+        o: skos:Concept
+
+      - p: skos:notation
+        o: "$(datastream.properties.direction)"
+
+      - p: skos:prefLabel
+        o: "$(thing.properties.richtung)"
+        language: de
+
+      - p: skos:scopeNote
+        o: "Richting zoals gepubliceerd door Hamburg SensorThings; absolute richting, niet noodzakelijk OSLO LinkDirectionValue."
+        language: nl
+
+
+  #################################################
+  # 4. Meetpunt
+  #################################################
+  meetpunt:
+    sources:
+      - source
+
+    s: "ex:meetpunt/$(thing['@iot.id'])"
+
+    po:
+      - p: a
+        o: verkeersmetingen:Meetpunt
+
+      - p: dct:identifier
+        o: "$(thing.properties.assetID)"
+
+      - p: rdfs:label
+        o: "$(thing.name)"
+        language: de
+
+      - p: dct:description
+        o: "$(thing.description)"
+        language: de
+
+      - p: dct:source
+        o: "$(thing['@iot.selfLink'])~iri"
+
+      - p: dct:modified
+        o: "$(thing.properties.infoLastUpdate)"
+        datatype: xsd:dateTime
+
+      - p: verkeer:eigenaar
+        o: "$(thing.properties.ownerThing)"
+
+      - p: verkeersmetingen:richtingBeschrijving
+        o: "$(thing.properties.richtung)"
+        language: de
+
+      - p: geo:hasGeometry
+        o: "ex:geom/$(thing['@iot.id'])~iri"
+
+
+  #################################################
+  # 5. Geometry
+  #################################################
+  geometry:
+    sources:
+      - source
+
+    s: "ex:geom/$(thing['@iot.id'])"
+
+    po:
+      - p: a
+        o: geo:Geometry
+
+      - p: a
+        o: sf:Point
+
+      - p: geo:asWKT
+        o: "POINT ($(locations[0].location.geometry.coordinates[0]) $(locations[0].location.geometry.coordinates[1]))"
+        datatype: geo:wktLiteral
+
+
+  #################################################
+  # 6. Sensor
+  #################################################
+  sensor:
+    sources:
+      - source
+
+    s: "ex:sensor/$(sensor['@iot.id'])"
+
+    po:
+      - p: a
+        o: sosa:Sensor
+
+      - p: dct:identifier
+        o: "$(sensor['@iot.id'])"
+
+      - p: rdfs:label
+        o: "$(sensor.name)"
+        language: de
+
+      - p: dct:description
+        o: "$(sensor.description)"
+        language: de
+
+      - p: dct:source
+        o: "$(sensor['@iot.selfLink'])~iri"
+
+      - p: dct:modified
+        o: "$(sensor.properties.infoLastUpdate)"
+        datatype: xsd:dateTime
+
+
+  #################################################
+  # 7. Time interval
+  #################################################
+  tijdsinterval:
+    sources:
+      - source
+
+    s: "ex:periode/$(observation['@iot.id'])"
+
+    po:
+      - p: a
+        o: time:TemporalEntity
+
+      - p: a
+        o: time:Interval
+
+      - p: time:hasBeginning
+        o: "ex:periode/$(observation['@iot.id'])/begin~iri"
+
+      - p: time:hasEnd
+        o: "ex:periode/$(observation['@iot.id'])/einde~iri"
+
+      - p: time:hasXSDDuration
+        o: "$(observation.phenomenonTime.hasXSDDuration)"
+        datatype: xsd:duration
+
+
+  begin:
+    sources:
+      - source
+
+    s: "ex:periode/$(observation['@iot.id'])/begin"
+
+    po:
+      - p: a
+        o: time:Instant
+
+      - p: time:inXSDDateTimeStamp
+        o: "$(observation.phenomenonTime.hasBeginning.inXSDDateTimeStamp)"
+        datatype: xsd:dateTimeStamp
+
+
+  einde:
+    sources:
+      - source
+
+    s: "ex:periode/$(observation['@iot.id'])/einde"
+
+    po:
+      - p: a
+        o: time:Instant
+
+      - p: time:inXSDDateTimeStamp
+        o: "$(observation.phenomenonTime.hasEnd.inXSDDateTimeStamp)"
+        datatype: xsd:dateTimeStamp
+
+
+  #################################################
+  # 8. Meetreeks / Datastream
+  #################################################
+  meetreeks:
+    sources:
+      - source
+
+    s: "ex:datastream/$(datastream['@iot.id'])"
+
+    po:
+      - p: a
+        o: verkeersmetingen:Meetreeks
+
+      - p: dct:identifier
+        o: "$(datastream['@iot.id'])"
+
+      - p: rdfs:label
+        o: "$(datastream.name)"
+        language: de
+
+      - p: dct:description
+        o: "$(datastream.description)"
+        language: de
+
+      - p: dct:source
+        o: "$(datastream['@iot.selfLink'])~iri"
+
+      - p: dct:modified
+        o: "$(datastream.properties.infoLastUpdate)"
+        datatype: xsd:dateTime
+
+      - p: verkeersmetingen:heeftMeetpunt
+        o: "ex:meetpunt/$(thing['@iot.id'])~iri"
+
+      - p: verkeersmetingen:uitgevoerdMet
+        o: "ex:sensor/$(sensor['@iot.id'])~iri"
+
+      - p: sosa:madeBySensor
+        o: "ex:sensor/$(sensor['@iot.id'])~iri"
+
+      - p: sosa:observedProperty
+        o: "ex:observedProperty/$(observedProperty['@iot.id'])~iri"
+
+      - p: verkeersmetingen:aggregatieduur
+        o: "$(datastream.properties.aggregationDuration)"
+        datatype: xsd:duration
+
+      - p: verkeersmetingen:aggregatiemethode
+        o: "$(datastream.properties.aggregationMethod)"
+
+      - p: verkeersmetingen:thema
+        o: "$(datastream.properties.topic)"
+        language: de
+
+      - p: verkeersmetingen:verkeerstype
+        o: "$(datastream.properties.typ)"
+        language: de
+
+
+  #################################################
+  # 9. Observed property
+  #################################################
+  observedProperty:
+    sources:
+      - source
+
+    s: "ex:observedProperty/$(observedProperty['@iot.id'])"
+
+    po:
+      - p: a
+        o: sosa:ObservableProperty
+
+      - p: a
+        o: skos:Concept
+
+      - p: dct:identifier
+        o: "$(observedProperty['@iot.id'])"
+
+      - p: rdfs:label
+        o: "$(observedProperty.name)"
+        language: de
+
+      - p: skos:prefLabel
+        o: "$(observedProperty.name)"
+        language: de
+
+      - p: dct:description
+        o: "$(observedProperty.description)"
+        language: de
+
+      - p: dct:source
+        o: "$(observedProperty['@iot.selfLink'])~iri"
+
+      - p: skos:definition
+        o: "$(observedProperty.definition)"
+
+
+  #################################################
+  # 10. Unit concept
+  #################################################
+  eenheid:
+    sources:
+      - source
+
+    s: "ex:eenheid/aantal"
+
+    po:
+      - p: a
+        o: skos:Concept
+
+      - p: skos:prefLabel
+        o: "$(datastream.unitOfMeasurement.name)"
+        language: de
+
+      - p: skos:notation
+        o: "$(datastream.unitOfMeasurement.symbol)"
+
+      - p: skos:definition
+        o: "$(datastream.unitOfMeasurement.definition)"

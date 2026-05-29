@@ -1,0 +1,169 @@
+{
+  "datastream": {
+    "@iot.selfLink": "https://iot.hamburg.de/v1.1/Datastreams(26598)",
+    "@iot.id": 26598,
+    "name": "Kfz-Aufkommen an Verkehrszählstelle 0370921 im 1-Tag-Intervall",
+    "description": "Die Anzahl der von dem Infrarotdetektor erfassten Kfz wird für ein 1-Tag-Intervall aufsummiert.",
+    "observationType": "http://www.opengis.net/def/ogc-om/OM_CountObservation",
+    "unitOfMeasurement": {
+      "name": "Anzahl",
+      "symbol": "",
+      "definition": ""
+    },
+    "observedArea": {
+      "type": "Point",
+      "coordinates": [
+        9.917789,
+        53.447992
+      ]
+    },
+    "phenomenonTime": "2020-12-14T23:00:00Z/2026-05-27T21:59:59Z",
+    "properties": {
+      "aggregationDuration": "P1D",
+      "aggregationMethod": "count",
+      "art": "Zählstelle",
+      "assetID": "0370",
+      "direction": "1",
+      "infoLastUpdate": "2025-11-25T09:33:30.701Z",
+      "internID": "MQ_1462",
+      "knotenarm": "2",
+      "layerName": "Anzahl_Kfz_Zaehlstelle_1-Tag",
+      "mediaMonitored": "transport",
+      "ownerData": "Freie und Hansestadt Hamburg",
+      "resultNature": "processed",
+      "serviceName": "HH_STA_Verkehrsdaten_Kfz_Infrarotdetektoren",
+      "topic": "Verkehr",
+      "typ": "Kfz",
+      "zusammensetzung": "9628-Z.2"
+    },
+    "resultTime": "2026-03-01T23:02:21.272Z/2026-05-27T21:58:12.23Z",
+    "ObservedProperty@iot.navigationLink": "https://iot.hamburg.de/v1.1/Datastreams(26598)/ObservedProperty",
+    "Sensor@iot.navigationLink": "https://iot.hamburg.de/v1.1/Datastreams(26598)/Sensor",
+    "Thing@iot.navigationLink": "https://iot.hamburg.de/v1.1/Datastreams(26598)/Thing",
+    "Observations@iot.navigationLink": "https://iot.hamburg.de/v1.1/Datastreams(26598)/Observations",
+    "thing": "https://iot.hamburg.de/v1.1/Things(12317)",
+    "observedProperty": "https://iot.hamburg.de/v1.1/ObservedProperties(5670)",
+    "sensor": "https://iot.hamburg.de/v1.1/Sensors(5668)"
+  },
+  "thing": {
+    "@iot.selfLink": "https://iot.hamburg.de/v1.1/Things(12317)",
+    "@iot.id": 12317,
+    "name": "Verkehrszählstelle 0370921",
+    "description": "Verkehrszählstelle zur Zählung der von Infrarotdetektoren erfassten Mobilitätswerkzeuge",
+    "properties": {
+      "art": "Zählstelle",
+      "assetID": "0370921",
+      "infoLastUpdate": "2025-11-25T09:33:30.701Z",
+      "internID": "MQ_1462",
+      "keywords": [
+        "Infrarotdetektor",
+        "Verkehrsmenge",
+        "automatisierte Verkehrsmengenerfassung",
+        "Hamburg",
+        "Hamburger Radzählnetz",
+        "aVME",
+        "HaRaZäN",
+        "Zählstelle"
+      ],
+      "language": "de",
+      "ownerThing": "Freie und Hansestadt Hamburg",
+      "richtung": "Nord nach Süd"
+    },
+    "HistoricalLocations@iot.navigationLink": "https://iot.hamburg.de/v1.1/Things(12317)/HistoricalLocations",
+    "Locations@iot.navigationLink": "https://iot.hamburg.de/v1.1/Things(12317)/Locations",
+    "MultiDatastreams@iot.navigationLink": "https://iot.hamburg.de/v1.1/Things(12317)/MultiDatastreams",
+    "Datastreams@iot.navigationLink": "https://iot.hamburg.de/v1.1/Things(12317)/Datastreams",
+    "locations": [
+      "https://iot.hamburg.de/v1.1/Locations(26524151)"
+    ]
+  },
+  "featureOfInterest": {
+    "@iot.selfLink": "https://iot.hamburg.de/v1.1/FeaturesOfInterest(11210280)",
+    "@iot.id": 11210280,
+    "name": "Verkehrszählstelle 0370921",
+    "description": "Mittelpunkt des Streckenverlaufes bezüglich Zählstelle 0370 auf dem Richtungsarm Nord von Nord nach Süd",
+    "encodingType": "application/vnd.geo+json",
+    "feature": {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.917789,
+          53.447992
+        ]
+      }
+    },
+    "properties": {
+      "infoLastUpdate": "2025-11-25T09:33:30.701Z",
+      "internID": "MQ_1462"
+    },
+    "Observations@iot.navigationLink": "https://iot.hamburg.de/v1.1/FeaturesOfInterest(11210280)/Observations"
+  },
+  "locations": [
+    {
+      "@iot.selfLink": "https://iot.hamburg.de/v1.1/Locations(26524151)",
+      "@iot.id": 26524151,
+      "name": "Verkehrszählstelle 0370921",
+      "description": "Mittelpunkt des Streckenverlaufes bezüglich Zählstelle 0370 auf dem Richtungsarm Nord von Nord nach Süd",
+      "encodingType": "application/vnd.geo+json",
+      "location": {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            9.917789,
+            53.447992
+          ]
+        }
+      },
+      "properties": {
+        "infoLastUpdate": "2025-11-25T09:33:30.701Z",
+        "internID": "MQ_1462"
+      },
+      "HistoricalLocations@iot.navigationLink": "https://iot.hamburg.de/v1.1/Locations(26524151)/HistoricalLocations",
+      "Things@iot.navigationLink": "https://iot.hamburg.de/v1.1/Locations(26524151)/Things"
+    }
+  ],
+  "sensor": {
+    "@iot.selfLink": "https://iot.hamburg.de/v1.1/Sensors(5668)",
+    "@iot.id": 5668,
+    "name": "Infrarotdetektor in ThermiCam2",
+    "description": "Infrarotdetektor zur Erfassung von Mobilitätswerkzeugen (Pkw, Fahrrad und Schwerverkehr))",
+    "encodingType": "application/pdf",
+    "metadata": "https://flir.netx.net/file/asset/17428/original",
+    "properties": {
+      "infoLastUpdate": "2025-12-02T17:16:55.821Z",
+      "internID": 1
+    },
+    "Datastreams@iot.navigationLink": "https://iot.hamburg.de/v1.1/Sensors(5668)/Datastreams",
+    "MultiDatastreams@iot.navigationLink": "https://iot.hamburg.de/v1.1/Sensors(5668)/MultiDatastreams"
+  },
+  "observedProperty": {
+    "@iot.selfLink": "https://iot.hamburg.de/v1.1/ObservedProperties(5670)",
+    "@iot.id": 5670,
+    "name": "Anzahl Kfz je Zählstelle",
+    "definition": "None",
+    "description": "Anzahl an Kfz, die die Zählstelle passiert haben",
+    "Datastreams@iot.navigationLink": "https://iot.hamburg.de/v1.1/ObservedProperties(5670)/Datastreams",
+    "MultiDatastreams@iot.navigationLink": "https://iot.hamburg.de/v1.1/ObservedProperties(5670)/MultiDatastreams"
+  },
+  "observation": {
+    "@iot.selfLink": "https://iot.hamburg.de/v1.1/Observations(1252599558)",
+    "@iot.id": 1252599558,
+    "phenomenonTime": {
+      "hasBeginning": {
+        "inXSDDateTimeStamp": "2026-05-24T22:00:00.000Z"
+      },
+      "hasEnd": {
+        "inXSDDateTimeStamp": "2026-05-25T21:59:59.000Z"
+      },
+      "hasXSDDuration": "P0DT23H59M59S"
+    },
+    "resultTime": "2026-05-25T21:58:30.936Z",
+    "result": 731,
+    "Datastream@iot.navigationLink": "https://iot.hamburg.de/v1.1/Observations(1252599558)/Datastream",
+    "FeatureOfInterest@iot.navigationLink": "https://iot.hamburg.de/v1.1/Observations(1252599558)/FeatureOfInterest",
+    "datastream": "https://iot.hamburg.de/v1.1/Datastreams(26598)",
+    "featureOfInterest": "https://iot.hamburg.de/v1.1/FeaturesOfInterest(11210280)"
+  }
+}
