@@ -19,13 +19,17 @@
 <> owl:imports <./node_modules/@rdfc/sensorthings-api-fetcher-ts/processor.ttl>.
 
 <> owl:imports <./node_modules/@rdfc/file-utils-processors-ts/processors.ttl>.
+<> owl:imports <./node_modules/@rdfc/log-processor-ts/processor.ttl>.
 
 
 
-<hamburg> a rdfc:Reader, rdfc:Writer.
-<mappingData> a rdfc:Reader, rdfc:Writer.
+
+<hamburg> a rdfc:Reader, rdfc:Writer;
+    rdfc:logLevel "debug".
+<mappingData> a rdfc:Reader, rdfc:Writer;
+    rdfc:logLevel "debug".
 <rdfdata> a rdfc:Reader, rdfc:Writer;
-    rdfc:logLevel "info".
+    rdfc:logLevel "debug".
 
 
 ### Define the pipeline
@@ -33,6 +37,7 @@
    rdfc:consistsOf [
        rdfc:instantiates rdfc:NodeRunner;
        rdfc:processor <fetcher>, <mappingReader>, <poster>; 
+    #    rdfc:processor <fetcher>, <mappingReader>, <logger>; 
    ], [
        rdfc:instantiates rdfc:JvmRunner;
        rdfc:processor <mapper>;
@@ -55,7 +60,7 @@
 <mappingReader> a rdfc:GlobRead;
     rdfc:glob <./mappings/mapping.rml.ttl>;
     rdfc:output <mappingData>;
-    rdfc:closeOnEnd true .
+    rdfc:closeOnEnd false .
 
 # Processor to do the RML mapping
 <mapper> a rdfc:RmlMapper;
@@ -71,7 +76,7 @@
     ].
 
 # <logger> a rdfc:LogProcessorJs;
-#     rdfc:reader <hamburg>;
+#     rdfc:reader <rdfdata>;
 #     rdfc:level "info";
 #     rdfc:label "test".
     

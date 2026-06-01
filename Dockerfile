@@ -4,10 +4,9 @@ FROM timbru31/java-node:21-20
 WORKDIR /opt/pipeline
 COPY . .
 
-RUN wget https://pod.rubendedecker.be/scholar/misc/rml-processor-jvm-0.0.1-all.jar ; 
 RUN mkdir -p build/plugins && \
-    mv rml-processor-jvm-0.0.1-all.jar build/plugins/rml-processor-jvm-master-SNAPSHOT-all.jar
-
+    curl -L https://jitpack.io/com/github/rdf-connect/rml-processor-jvm/master-SNAPSHOT/rml-processor-jvm-master-SNAPSHOT-all.jar \
+      -o build/plugins/rml-processor-jvm-master-SNAPSHOT-all.jar
 
 # Install dependencies
 RUN npm install
