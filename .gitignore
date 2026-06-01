@@ -3,6 +3,7 @@ lib/
 node_modules/
 hamburg_ldes/
 rml-processor-jvm-0.0.1-all.jar
+rml-processor-jvm-master-SNAPSHOT-all.jar
 
 .DS_Store
 .gradle
