@@ -4,9 +4,11 @@ FROM timbru31/java-node:21-20
 WORKDIR /opt/pipeline
 COPY . .
 
+ARG CACHE_BUST=1
 RUN mkdir -p build/plugins && \
-    curl -L https://jitpack.io/com/github/rdf-connect/rml-processor-jvm/master-SNAPSHOT/rml-processor-jvm-master-SNAPSHOT-all.jar \
-      -o build/plugins/rml-processor-jvm-master-SNAPSHOT-all.jar
+    curl -fL https://jitpack.io/com/github/rdf-connect/rml-processor-jvm/master-SNAPSHOT/rml-processor-jvm-master-SNAPSHOT-all.jar \
+      -o build/plugins/rml-processor-jvm-master-SNAPSHOT-all.jar && \
+    ls -l build/plugins
 
 # Install dependencies
 RUN npm install

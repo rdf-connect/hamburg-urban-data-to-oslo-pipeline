@@ -84,3 +84,6 @@ jobs:
           sbom: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+          build-args: |
+            CACHE_BUST=${{ github.run_id }}
